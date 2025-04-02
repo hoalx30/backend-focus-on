@@ -2,12 +2,15 @@ package spring.boot.apis.service.impl;
 
 import java.util.List;
 import java.util.Optional;
+
+import org.springframework.data.domain.PageRequest;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
+
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.stereotype.Service;
-import org.springframework.util.CollectionUtils;
 import spring.boot.apis.dto.profile.ProfileCreate;
 import spring.boot.apis.dto.profile.ProfileResponse;
 import spring.boot.apis.dto.profile.ProfileUpdate;
@@ -42,7 +45,8 @@ public class ProfileService implements IProfileService {
   @Override
   public User owningExistedById(Long id) {
     Optional<User> owning = userRepository.findById(id);
-    if (!owning.isPresent()) throw new ServiceException(HttpMessage.OWNING_SIDE_NOT_EXISTED);
+    if (!owning.isPresent())
+      throw new ServiceException(HttpMessage.OWNING_SIDE_NOT_EXISTED);
     return owning.get();
   }
 
@@ -54,6 +58,8 @@ public class ProfileService implements IProfileService {
     }
   }
 
+  // Testing for Spring Security Authorization Only
+  @PreAuthorize("hasAnyAuthority('CREATE','ROLE_ADMIN')")
   @Override
   public ProfileResponse save(ProfileCreate create) {
     Profile model = statusMapper.asModel(create);
