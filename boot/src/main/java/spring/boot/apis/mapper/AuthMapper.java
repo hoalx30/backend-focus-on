@@ -1,24 +1,20 @@
 package spring.boot.apis.mapper;
 
-import java.util.List;
-
 import org.mapstruct.Mapper;
-import org.mapstruct.MappingTarget;
 import org.mapstruct.NullValuePropertyMappingStrategy;
 import org.mapstruct.ReportingPolicy;
 
+import spring.boot.apis.dto.auth.CredentialRequest;
+import spring.boot.apis.dto.auth.RegisterRequest;
+import spring.boot.apis.dto.auth.RegisterResponse;
 import spring.boot.apis.dto.user.UserCreate;
 import spring.boot.apis.dto.user.UserResponse;
-import spring.boot.apis.dto.user.UserUpdate;
-import spring.boot.apis.model.User;
 
 @Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE, nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
-public interface UserMapper {
-  User asModel(UserCreate create);
+public interface AuthMapper {
+    UserCreate asUserCreate(RegisterRequest request);
 
-  UserResponse asResponse(User model);
+    UserCreate asUserCreate(CredentialRequest request);
 
-  List<UserResponse> asResponses(List<User> models);
-
-  void mergeModel(@MappingTarget User model, UserUpdate update);
+    RegisterResponse asRegisterResponse(UserResponse response);
 }

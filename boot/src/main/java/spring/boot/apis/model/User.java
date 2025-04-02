@@ -1,5 +1,20 @@
 package spring.boot.apis.model;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Set;
+
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.SoftDelete;
+import org.hibernate.annotations.SoftDeleteType;
+import org.hibernate.annotations.UpdateTimestamp;
+import org.hibernate.type.NumericBooleanConverter;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -13,25 +28,12 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Set;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.experimental.FieldDefaults;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.SoftDelete;
-import org.hibernate.annotations.SoftDeleteType;
-import org.hibernate.annotations.UpdateTimestamp;
-import org.hibernate.type.NumericBooleanConverter;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
 import spring.boot.apis.introspect.UserIntrospect;
 
 @Entity
@@ -41,7 +43,7 @@ import spring.boot.apis.introspect.UserIntrospect;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode(exclude = {"profile", "devices", "roles"})
+@EqualsAndHashCode(exclude = { "profile", "devices", "roles" })
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class User implements UserDetails {
   @Id
@@ -56,8 +58,10 @@ public class User implements UserDetails {
   @Column(name = "password", nullable = false)
   String password;
 
-  @CreationTimestamp LocalDateTime created;
-  @UpdateTimestamp LocalDateTime updated;
+  @CreationTimestamp
+  LocalDateTime created;
+  @UpdateTimestamp
+  LocalDateTime updated;
 
   @OneToOne(mappedBy = "user", fetch = FetchType.LAZY)
   Profile profile;

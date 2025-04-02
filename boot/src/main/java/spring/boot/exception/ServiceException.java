@@ -10,5 +10,5 @@ import spring.boot.constant.HttpMessage;
 @EqualsAndHashCode(callSuper = true)
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class ServiceException extends RuntimeException {
-  HttpMessage causBy;
+  HttpMessage causeBy;
 }

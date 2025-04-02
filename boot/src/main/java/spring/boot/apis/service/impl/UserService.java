@@ -4,14 +4,16 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
-import lombok.AccessLevel;
-import lombok.RequiredArgsConstructor;
-import lombok.experimental.FieldDefaults;
+
 import org.springframework.data.domain.PageRequest;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
+
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
 import spring.boot.apis.dto.user.UserCreate;
 import spring.boot.apis.dto.user.UserResponse;
 import spring.boot.apis.dto.user.UserUpdate;
@@ -30,18 +32,17 @@ import spring.boot.response.Paging;
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class UserService implements IUserService {
-  @Override
-  public UserDetailsService userDetailsService() {
-    return username ->
-        userRepository
-            .findByUsername(username)
-            .orElseThrow(
-                () -> new UsernameNotFoundException(HttpMessage.BAD_CREDENTIAL.getMessage()));
-  }
 
   UserRepository userRepository;
   RoleRepository roleRepository;
   UserMapper userMapper;
+
+  @Override
+  public UserDetailsService userDetailsService() {
+    return username -> userRepository
+        .findByUsername(username)
+        .orElseThrow(() -> new UsernameNotFoundException(HttpMessage.BAD_CREDENTIAL.getMessage()));
+  }
 
   @Override
   public void notExistedByUsername(String username) {
@@ -52,7 +53,8 @@ public class UserService implements IUserService {
   @Override
   public User existedById(Long id) {
     Optional<User> old = userRepository.findById(id);
-    if (!old.isPresent()) throw new ServiceException(HttpMessage.FIND_BY_ID_NO_CONTENT);
+    if (!old.isPresent())
+      throw new ServiceException(HttpMessage.FIND_BY_ID_NO_CONTENT);
     return old.get();
   }
 
@@ -83,7 +85,8 @@ public class UserService implements IUserService {
   @Override
   public UserResponse findByUsername(String username) {
     Optional<User> queried = userRepository.findByUsername(username);
-    if (!queried.isPresent()) throw new ServiceException(HttpMessage.NOT_EXISTED);
+    if (!queried.isPresent())
+      throw new ServiceException(HttpMessage.NOT_EXISTED);
     return userMapper.asResponse(queried.get());
   }
 

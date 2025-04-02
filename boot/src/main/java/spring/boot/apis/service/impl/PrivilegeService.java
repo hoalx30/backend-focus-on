@@ -2,12 +2,14 @@ package spring.boot.apis.service.impl;
 
 import java.util.List;
 import java.util.Optional;
-import lombok.AccessLevel;
-import lombok.RequiredArgsConstructor;
-import lombok.experimental.FieldDefaults;
+
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
+
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
 import spring.boot.apis.dto.privilege.PrivilegeCreate;
 import spring.boot.apis.dto.privilege.PrivilegeResponse;
 import spring.boot.apis.dto.privilege.PrivilegeUpdate;
@@ -36,7 +38,8 @@ public class PrivilegeService implements IPrivilegeService {
   @Override
   public Privilege existedById(Long id) {
     Optional<Privilege> old = privilegeRepository.findById(id);
-    if (!old.isPresent()) throw new ServiceException(HttpMessage.FIND_BY_ID_NO_CONTENT);
+    if (!old.isPresent())
+      throw new ServiceException(HttpMessage.FIND_BY_ID_NO_CONTENT);
     return old.get();
   }
 
