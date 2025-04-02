@@ -1,5 +1,7 @@
 package spring.boot.config;
 
+import javax.crypto.spec.SecretKeySpec;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -11,8 +13,12 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.jose.jws.MacAlgorithm;
+import org.springframework.security.oauth2.jwt.JwtDecoder;
+import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
+import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.bind.annotation.CrossOrigin;
 
 import lombok.AccessLevel;
@@ -53,19 +59,31 @@ public class WebSecurityConfigurer {
   @Bean
   SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
     httpSecurity.csrf(AbstractHttpConfigurer::disable);
-    /**
-     * httpSecurity.authorizeHttpRequests(request ->
-     * request.requestMatchers(publicEndpoints).permitAll().anyRequest().authenticated());
-     */
+    httpSecurity.authorizeHttpRequests(
+        request -> request.requestMatchers(publicEndpoints).permitAll().anyRequest().authenticated());
     httpSecurity.sessionManagement(
         session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
-    httpSecurity
-        .authenticationProvider(securityProvider())
-        .addFilterBefore(daoAuthFilter, UsernamePasswordAuthenticationFilter.class);
+    httpSecurity.oauth2ResourceServer(oauth2 -> oauth2.jwt(jwtConfigurer -> jwtConfigurer.decoder(jwtDecoder())
+        .jwtAuthenticationConverter(jwtAuthenticationConverter())).authenticationEntryPoint(resourceServerEntryPoint));
     /**
-     * httpSecurity.httpBasic(basicConfigurer ->
-     * basicConfigurer.authenticationEntryPoint(resourceServerEntryPoint));
+     * httpSecurity.authenticationProvider(securityProvider()).addFilterBefore(daoAuthFilter,
+     * UsernamePasswordAuthenticationFilter.class);
      */
     return httpSecurity.build();
+  }
+
+  @Bean
+  JwtAuthenticationConverter jwtAuthenticationConverter() {
+    JwtGrantedAuthoritiesConverter jwtGrantedAuthoritiesConverter = new JwtGrantedAuthoritiesConverter();
+    jwtGrantedAuthoritiesConverter.setAuthorityPrefix("ROLE_");
+    JwtAuthenticationConverter jwtAuthenticationConverter = new JwtAuthenticationConverter();
+    jwtAuthenticationConverter.setJwtGrantedAuthoritiesConverter(jwtGrantedAuthoritiesConverter);
+    return jwtAuthenticationConverter;
+  }
+
+  @Bean
+  JwtDecoder jwtDecoder() {
+    SecretKeySpec secretKeySpec = new SecretKeySpec(accessTokenSecret.getBytes(), "HS256");
+    return NimbusJwtDecoder.withSecretKey(secretKeySpec).macAlgorithm(MacAlgorithm.HS256).build();
   }
 }

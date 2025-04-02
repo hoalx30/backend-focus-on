@@ -31,9 +31,8 @@ public class ResourceServerEntryPoint implements AuthenticationEntryPoint {
     // @formatter:off
     public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException, ServletException { // @formatter:on
         System.out.println("Exception: " + authException.getMessage());
-        String accessToken = request.getHeader(HttpHeaders.AUTHORIZATION).replace("Bearer ", "");
         // @formatter:off
-        HttpMessage unauthorized = StringUtils.isEmpty(accessToken) ? HttpMessage.MISSING_AUTHORIZATION : HttpMessage.UNAUTHORIZED; // @formatter:on
+        HttpMessage unauthorized = StringUtils.isEmpty(request.getHeader(HttpHeaders.AUTHORIZATION)) ? HttpMessage.MISSING_AUTHORIZATION : HttpMessage.UNAUTHORIZED; // @formatter:on
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         response.setStatus(HttpStatus.UNAUTHORIZED.value());
         var resp = Response.builder().code(unauthorized.getCode()).message(unauthorized.getMessage()).build();
