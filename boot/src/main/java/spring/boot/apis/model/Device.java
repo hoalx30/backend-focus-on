@@ -1,5 +1,12 @@
 package spring.boot.apis.model;
 
+import java.io.Serializable;
+import java.time.LocalDateTime;
+
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.SoftDelete;
+import org.hibernate.annotations.UpdateTimestamp;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
@@ -10,17 +17,12 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
-import java.io.Serializable;
-import java.time.LocalDateTime;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.experimental.FieldDefaults;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.SoftDelete;
-import org.hibernate.annotations.UpdateTimestamp;
 import spring.boot.apis.introspect.DeviceIntrospect;
 
 @Entity
@@ -28,7 +30,7 @@ import spring.boot.apis.introspect.DeviceIntrospect;
 @Table(name = "device")
 @SoftDelete
 @Data
-@EqualsAndHashCode(exclude = {"user"})
+@EqualsAndHashCode(exclude = { "user" })
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
@@ -45,8 +47,10 @@ public class Device implements Serializable {
   @Column(name = "user_agent", nullable = false)
   String userAgent;
 
-  @CreationTimestamp LocalDateTime created;
-  @UpdateTimestamp LocalDateTime updated;
+  @CreationTimestamp
+  LocalDateTime created;
+  @UpdateTimestamp
+  LocalDateTime updated;
 
   @ManyToOne
   @JoinColumn(name = "user_id")

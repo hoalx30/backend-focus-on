@@ -7,13 +7,13 @@ import spring.boot.apis.dto.auth.RegisterResponse;
 import spring.boot.apis.model.BadCredential;
 
 public interface IAuthService {
-    CredentialResponse signUp(RegisterRequest request);
+  CredentialResponse signUp(RegisterRequest request);
 
-    CredentialResponse signIn(CredentialRequest request);
+  CredentialResponse signIn(CredentialRequest request);
 
-    RegisterResponse me(String username);
+  RegisterResponse me(String username);
 
-    long signOut(BadCredential model);
+  long signOut(BadCredential model);
 
-    CredentialResponse refresh(BadCredential badCredential, String referId, String refreshToken);
+  CredentialResponse refresh(BadCredential badCredential, String referId, String refreshToken);
 }

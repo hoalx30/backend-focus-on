@@ -13,10 +13,10 @@ import lombok.experimental.FieldDefaults;
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class UserPrincipal {
-    String username;
-    long userId;
-    String sessionId;
-    Date sessionExpiredAt;
-    String scope;
-    String referId;
+  String username;
+  long userId;
+  String sessionId;
+  Date sessionExpiredAt;
+  String scope;
+  String referId;
 }

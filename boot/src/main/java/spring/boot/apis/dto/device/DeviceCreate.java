@@ -19,5 +19,6 @@ public class DeviceCreate {
   @NotBlank(message = "userAgent can not be blank")
   String userAgent;
 
-  @NotNull(message = "userId can not be blank") Long userId;
+  @NotNull(message = "userId can not be blank")
+  Long userId;
 }

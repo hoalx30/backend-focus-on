@@ -11,8 +11,8 @@ import lombok.experimental.FieldDefaults;
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class CredentialResponse {
-    String accessToken;
-    long accessTokenIssuedAt;
-    String refreshToken;
-    long refreshTokenIssuedAt;
+  String accessToken;
+  long accessTokenIssuedAt;
+  String refreshToken;
+  long refreshTokenIssuedAt;
 }

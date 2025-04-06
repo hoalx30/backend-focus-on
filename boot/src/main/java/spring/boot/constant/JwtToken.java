@@ -8,8 +8,10 @@ import lombok.experimental.FieldDefaults;
 @Getter
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
-public enum HttpHeader {
-  X_REFRESH_TOKEN("x-refresh-token");
+public enum JwtToken {
+  TOKEN_EXPIRED("Jwt expired"),
+  ILL_LEGAL_TOKEN("Malformed payload"),
+  ;
 
   String value;
 }

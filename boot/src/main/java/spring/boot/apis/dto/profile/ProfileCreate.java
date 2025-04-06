@@ -16,5 +16,6 @@ public class ProfileCreate {
   @NotBlank(message = "fullName can not be blank")
   String fullName;
 
-  @NotNull(message = "userId can not be blank") Long userId;
+  @NotNull(message = "userId can not be blank")
+  Long userId;
 }

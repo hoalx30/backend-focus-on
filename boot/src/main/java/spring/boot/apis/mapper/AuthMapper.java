@@ -12,9 +12,9 @@ import spring.boot.apis.dto.user.UserResponse;
 
 @Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE, nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
 public interface AuthMapper {
-    UserCreate asUserCreate(RegisterRequest request);
+  UserCreate asUserCreate(RegisterRequest request);
 
-    UserCreate asUserCreate(CredentialRequest request);
+  UserCreate asUserCreate(CredentialRequest request);
 
-    RegisterResponse asRegisterResponse(UserResponse response);
+  RegisterResponse asRegisterResponse(UserResponse response);
 }

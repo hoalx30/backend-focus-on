@@ -4,12 +4,14 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
-import lombok.AccessLevel;
-import lombok.RequiredArgsConstructor;
-import lombok.experimental.FieldDefaults;
+
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
+
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
 import spring.boot.apis.dto.role.RoleCreate;
 import spring.boot.apis.dto.role.RoleResponse;
 import spring.boot.apis.dto.role.RoleUpdate;
@@ -41,7 +43,8 @@ public class RoleService implements IRoleService {
   @Override
   public Role existedById(Long id) {
     Optional<Role> queried = roleRepository.findById(id);
-    if (!queried.isPresent()) throw new ServiceException(HttpMessage.FIND_BY_ID_NO_CONTENT);
+    if (!queried.isPresent())
+      throw new ServiceException(HttpMessage.FIND_BY_ID_NO_CONTENT);
     return queried.get();
   }
 

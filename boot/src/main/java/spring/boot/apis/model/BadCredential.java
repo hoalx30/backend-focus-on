@@ -31,20 +31,20 @@ import spring.boot.apis.introspect.BadCredentialIntrospect;
 @EqualsAndHashCode(exclude = {})
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class BadCredential implements Serializable {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    Long id;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  Long id;
 
-    @NotBlank(message = "accessTokenId can not be blank")
-    @Column(name = "access_token_id", nullable = false)
-    String accessTokenId;
+  @NotBlank(message = "accessTokenId can not be blank")
+  @Column(name = "access_token_id", nullable = false)
+  String accessTokenId;
 
-    @Temporal(TemporalType.TIMESTAMP)
-    @NotNull(message = "accessTokenExpiredAt can not be blank")
-    @Column(name = "access_token_expired_at", nullable = false)
-    Date accessTokenExpiredAt;
+  @Temporal(TemporalType.TIMESTAMP)
+  @NotNull(message = "accessTokenExpiredAt can not be blank")
+  @Column(name = "access_token_expired_at", nullable = false)
+  Date accessTokenExpiredAt;
 
-    @NotNull(message = "userId can not be blank")
-    @Column(name = "user_id", nullable = false)
-    Long userId;
+  @NotNull(message = "userId can not be blank")
+  @Column(name = "user_id", nullable = false)
+  Long userId;
 }

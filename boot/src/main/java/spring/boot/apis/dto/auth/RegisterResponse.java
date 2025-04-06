@@ -14,7 +14,7 @@ import spring.boot.apis.dto.role.RoleResponse;
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class RegisterResponse {
-    Long id;
-    String username;
-    Set<RoleResponse> roles;
+  Long id;
+  String username;
+  Set<RoleResponse> roles;
 }

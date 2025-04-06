@@ -16,11 +16,11 @@ import lombok.experimental.FieldDefaults;
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class RegisterRequest {
-    @NotBlank(message = "username can not be blank")
-    String username;
+  @NotBlank(message = "username can not be blank")
+  String username;
 
-    @NotBlank(message = "password can not be blank")
-    String password;
+  @NotBlank(message = "password can not be blank")
+  String password;
 
-    Set<Long> roleIds = new HashSet<>(List.of(1L));
+  Set<Long> roleIds = new HashSet<>(List.of(1L));
 }

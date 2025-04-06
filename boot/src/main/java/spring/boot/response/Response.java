@@ -1,6 +1,7 @@
 package spring.boot.response;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -15,7 +16,8 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @JsonInclude(value = JsonInclude.Include.NON_NULL)
 public class Response<T> {
-  @Builder.Default long timestamp = System.currentTimeMillis();
+  @Builder.Default
+  long timestamp = System.currentTimeMillis();
   int code;
   String message;
   T payload;
