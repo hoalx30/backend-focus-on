@@ -15,7 +15,6 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -38,7 +37,9 @@ import spring.boot.constant.HttpMessage;
 import spring.boot.exception.ServiceException;
 import spring.boot.response.Response;
 
-@Component
+/**
+ * @Component
+ */
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class DAOAuthFilter extends OncePerRequestFilter {
@@ -54,7 +55,8 @@ public class DAOAuthFilter extends OncePerRequestFilter {
   // @formatter:off
     @Override
     protected void doFilterInternal(@NonNull HttpServletRequest request, @NonNull HttpServletResponse response, @NonNull FilterChain filterChain) throws ServletException, IOException { // @formatter:on
-    List<String> publicEndpoints = List.of("/api/v1/auth/sign-in", "/api/v1/auth/sign-up");
+    List<String> publicEndpoints = List.of("/api/v1/auth/sign-in", "/api/v1/auth/sign-up", "/v3/api-docs/**",
+        "/swagger-ui/**");
     if (publicEndpoints.contains(request.getRequestURI())) {
       filterChain.doFilter(request, response);
       return;

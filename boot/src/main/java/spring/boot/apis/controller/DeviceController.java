@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import io.swagger.v3.oas.annotations.Hidden;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
@@ -27,6 +28,7 @@ import spring.boot.constant.HttpMessage;
 import spring.boot.response.MultiResource;
 import spring.boot.response.Response;
 
+@Hidden
 @RestController
 @RequestMapping(path = "/api/v1/devices")
 @RequiredArgsConstructor

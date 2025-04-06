@@ -12,6 +12,12 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -25,6 +31,7 @@ import spring.boot.apis.service.IAuthService;
 import spring.boot.constant.HttpMessage;
 import spring.boot.response.Response;
 
+@Tag(name = "Authentication Controller", description = "Authentication controller on API")
 @RestController
 @RequestMapping(path = "/api/v1/auth")
 @RequiredArgsConstructor
@@ -32,6 +39,14 @@ import spring.boot.response.Response;
 public class AuthController {
   IAuthService authService;
 
+  @Operation(summary = "Sign-up", description = "Sign-up endpoint for new user")
+  @ApiResponse(responseCode = "200", description = "Ok: Success", content = {
+      @Content(schema = @Schema(implementation = CredentialResponse.class), mediaType = "application/json")
+  })
+  @ApiResponse(responseCode = "400", description = "Bad request: missing username, password, roleIds, username already exists, etc...", content = {
+      @Content(schema = @Schema(), mediaType = "application/json") })
+  @ApiResponse(responseCode = "500", description = "Internal server error: uncategorized error", content = {
+      @Content(schema = @Schema(), mediaType = "application/json") })
   @PostMapping("/sign-up")
   public ResponseEntity<Response<CredentialResponse>> signUp(@RequestBody @Valid RegisterRequest request) {
     HttpMessage created = HttpMessage.SIGN_UP;
@@ -44,6 +59,14 @@ public class AuthController {
     return ResponseEntity.status(created.getHttpStatus()).body(response);
   }
 
+  @Operation(summary = "Sign-in", description = "Sign-in endpoint for existing user")
+  @ApiResponse(responseCode = "200", description = "Ok: Success", content = {
+      @Content(schema = @Schema(implementation = CredentialResponse.class), mediaType = "application/json")
+  })
+  @ApiResponse(responseCode = "400", description = "Bad request: missing username, password, username not exists, etc...", content = {
+      @Content(schema = @Schema(), mediaType = "application/json") })
+  @ApiResponse(responseCode = "500", description = "Internal server error: uncategorized error", content = {
+      @Content(schema = @Schema(), mediaType = "application/json") })
   @PostMapping("/sign-in")
   public ResponseEntity<Response<CredentialResponse>> signIn(@RequestBody @Valid CredentialRequest request) {
     HttpMessage ok = HttpMessage.SIGN_IN;
@@ -56,6 +79,15 @@ public class AuthController {
     return ResponseEntity.ok().body(response);
   }
 
+  @Operation(summary = "Retrieve profile", description = "Retrieve profile endpoint for existing user")
+  @ApiResponse(responseCode = "200", description = "Ok: Success", content = {
+      @Content(schema = @Schema(implementation = RegisterRequest.class), mediaType = "application/json")
+  })
+  @ApiResponse(responseCode = "401", description = "Unauthorized: missing accessToken, token is ill legal, etc...", content = {
+      @Content(schema = @Schema(), mediaType = "application/json") })
+  @ApiResponse(responseCode = "500", description = "Internal server error: uncategorized error", content = {
+      @Content(schema = @Schema(), mediaType = "application/json") })
+  @SecurityRequirement(name = "Authorization")
   @GetMapping("/me")
   public ResponseEntity<Response<RegisterResponse>> me(Authentication authentication) {
     HttpMessage ok = HttpMessage.RETRIEVE_PROFILE;
@@ -68,6 +100,15 @@ public class AuthController {
     return ResponseEntity.ok().body(response);
   }
 
+  @Operation(summary = "Sign out", description = "Sign out endpoint for logon user")
+  @ApiResponse(responseCode = "200", description = "Ok: Success", content = {
+      @Content(schema = @Schema(implementation = Long.class), mediaType = "application/json")
+  })
+  @ApiResponse(responseCode = "401", description = "Unauthorized: missing accessToken, token is ill legal, etc...", content = {
+      @Content(schema = @Schema(), mediaType = "application/json") })
+  @ApiResponse(responseCode = "500", description = "Internal server error: uncategorized error", content = {
+      @Content(schema = @Schema(), mediaType = "application/json") })
+  @SecurityRequirement(name = "Authorization")
   @PostMapping("/sign-out")
   public ResponseEntity<Response<Long>> signOut(Authentication authentication) {
     HttpMessage created = HttpMessage.SIGN_OUT;
@@ -83,6 +124,15 @@ public class AuthController {
     return ResponseEntity.status(created.getHttpStatus()).body(response);
   }
 
+  @Operation(summary = "Refresh token", description = "Refresh token endpoint for existing user")
+  @ApiResponse(responseCode = "200", description = "Ok: Success", content = {
+      @Content(schema = @Schema(implementation = RegisterResponse.class), mediaType = "application/json")
+  })
+  @ApiResponse(responseCode = "401", description = "Unauthorized: missing accessToken, fresh token, token is ill legal, edited, etc...", content = {
+      @Content(schema = @Schema(), mediaType = "application/json") })
+  @ApiResponse(responseCode = "500", description = "Internal server error: uncategorized error", content = {
+      @Content(schema = @Schema(), mediaType = "application/json") })
+  @SecurityRequirement(name = "Authorization")
   @PostMapping("/refresh")
   // @formatter:off
     public ResponseEntity<Response<CredentialResponse>> refresh(@RequestHeader(value = "X-REFRESH-TOKEN", required = true) String refreshToken, Authentication authentication) { // @formatter:on

@@ -27,7 +27,6 @@ import lombok.experimental.FieldDefaults;
 import lombok.experimental.NonFinal;
 import spring.boot.apis.service.IUserService;
 import spring.boot.exception.ResourceServerEntryPoint;
-import spring.boot.filter.DAOAuthFilter;
 
 @EnableWebSecurity
 @EnableMethodSecurity
@@ -38,12 +37,16 @@ import spring.boot.filter.DAOAuthFilter;
 public class WebSecurityConfigurer {
   @NonFinal
   String[] publicEndpoints = { "/api/v1/auth/sign-in", "/api/v1/auth/sign-up" };
+  String[] swaggerEndpoints = { "/v3/api-docs/**", "/swagger-ui/**" };
 
   @NonFinal
   @Value("${spring.security.accessTokenSecret}")
   String accessTokenSecret;
 
-  DAOAuthFilter daoAuthFilter;
+  /**
+   * Uncomment for DAO Authentication filter
+   * DAOAuthFilter daoAuthFilter;
+   */
   IUserService userService;
   PasswordEncoder passwordEncoder;
   ResourceServerEntryPoint resourceServerEntryPoint;
@@ -60,7 +63,8 @@ public class WebSecurityConfigurer {
   SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
     httpSecurity.csrf(AbstractHttpConfigurer::disable);
     httpSecurity.authorizeHttpRequests(
-        request -> request.requestMatchers(publicEndpoints).permitAll().anyRequest().authenticated());
+        request -> request.requestMatchers(publicEndpoints).permitAll().requestMatchers(swaggerEndpoints).permitAll()
+            .anyRequest().authenticated());
     httpSecurity.sessionManagement(
         session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
     httpSecurity.oauth2ResourceServer(oauth2 -> oauth2.jwt(jwtConfigurer -> jwtConfigurer.decoder(jwtDecoder())

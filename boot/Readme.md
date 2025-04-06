@@ -11,5 +11,6 @@
 - authentication support: sign-in, sign-up, sign-out, retrieve profile, refresh token using jwt (with filter and resource server)
 - authorization support: with rbac pattern using spring security (with filter and resource server)
 - transform codebase with spotless
+- apis documentation with swagger ui 3
 
 ### 💦 Todo:
