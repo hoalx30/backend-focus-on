@@ -8,6 +8,10 @@ import java.util.Date;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.client.registration.ClientRegistration;
+import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -44,6 +48,8 @@ import spring.boot.response.Response;
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class AuthController {
+  ClientRegistrationRepository clientRegistrationRepository;
+
   IAuthService authService;
 
   @NonFinal
@@ -181,6 +187,31 @@ public class AuthController {
   public ResponseEntity<Response<CredentialResponse>> signUpGoogle(@RequestParam("code") String code) {
     HttpMessage created = HttpMessage.SIGN_UP_WITH_GOOGLE;
     CredentialResponse credential = authService.signUpGoogle(code);
+    var response = Response.<CredentialResponse>builder()
+        .code(created.getCode())
+        .message(created.getMessage())
+        .payload(credential)
+        .build();
+    return ResponseEntity.status(created.getHttpStatus()).body(response);
+  }
+
+  @GetMapping("/oauth2/authorize")
+  public void authorization(HttpServletResponse response) throws IOException {
+    ClientRegistration clientRegistration = clientRegistrationRepository.findByRegistrationId("google");
+    String authorizationUri = clientRegistration.getProviderDetails().getAuthorizationUri();
+    String redirectUri = clientRegistration.getRedirectUri();
+    String scope = String.join(" ", clientRegistration.getScopes());
+    String clientId = clientRegistration.getClientId();
+    // @formatter:off
+    String oauthUrl = authorizationUri + "?response_type=code" + "&client_id=" + clientId + "&redirect_uri=" + redirectUri + "&scope=" + scope; // @formatter:on
+    response.sendRedirect(oauthUrl);
+  }
+
+  @GetMapping("/oauth2/callback")
+  // @formatter:off
+  public ResponseEntity<Response<CredentialResponse>> signUpGoogleOAuth2(@AuthenticationPrincipal OAuth2User oauth2User) { // @formatter:on
+    HttpMessage created = HttpMessage.SIGN_UP_WITH_GOOGLE;
+    CredentialResponse credential = authService.signUpGoogleOAuth2(oauth2User);
     var response = Response.<CredentialResponse>builder()
         .code(created.getCode())
         .message(created.getMessage())

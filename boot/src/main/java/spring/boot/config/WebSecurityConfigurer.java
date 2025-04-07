@@ -40,7 +40,9 @@ public class WebSecurityConfigurer {
       "/api/v1/auth/sign-in",
       "/api/v1/auth/sign-up",
       "/api/v1/auth/oauth/authorize",
-      "/api/v1/auth/oauth/callback/**" };
+      "/api/v1/auth/oauth/callback/**",
+      "/api/v1/auth/oauth2/authorize",
+      "/api/v1/auth/oauth2/callback/**" };
   String[] swaggerEndpoints = { "/v3/api-docs/**", "/swagger-ui/**" };
 
   @NonFinal
@@ -73,6 +75,9 @@ public class WebSecurityConfigurer {
         session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
     httpSecurity.oauth2ResourceServer(oauth2 -> oauth2.jwt(jwtConfigurer -> jwtConfigurer.decoder(jwtDecoder())
         .jwtAuthenticationConverter(jwtAuthenticationConverter())).authenticationEntryPoint(resourceServerEntryPoint));
+    httpSecurity.oauth2Login(oauth2 -> oauth2.loginPage("/api/v1/auth/oauth2/authorize")
+        .defaultSuccessUrl("/api/v1/auth/oauth2/callback", true));
+
     /**
      * httpSecurity.authenticationProvider(securityProvider()).addFilterBefore(daoAuthFilter,
      * UsernamePasswordAuthenticationFilter.class);

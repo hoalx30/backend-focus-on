@@ -4,6 +4,7 @@ import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 
 import com.nimbusds.jwt.SignedJWT;
@@ -142,6 +143,12 @@ public class AuthService implements IAuthService {
     // @formatter:off
     GoogleTokenExchangeResponse tokenExchange = googleOAuthClient.exchangeToken(new GoogleTokenExchangeRequest(code, gapiClientId, gapiClientSecret, gapiRedirectUrl, OAuthGrantType.AUTHORIZATION_CODE.getValue())); // @formatter:on
     GoogleUser googleUser = googleUserClient.userInfo(tokenExchange.getAccessToken());
+    return signUp(authMapper.asRegisterRequest(googleUser));
+  }
+
+  @Override
+  public CredentialResponse signUpGoogleOAuth2(OAuth2User oauth2User) {
+    GoogleUser googleUser = (GoogleUser) oauth2User;
     return signUp(authMapper.asRegisterRequest(googleUser));
   }
 }

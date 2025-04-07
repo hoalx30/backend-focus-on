@@ -1,5 +1,7 @@
 package spring.boot.apis.service;
 
+import org.springframework.security.oauth2.core.user.OAuth2User;
+
 import spring.boot.apis.dto.auth.CredentialRequest;
 import spring.boot.apis.dto.auth.CredentialResponse;
 import spring.boot.apis.dto.auth.RegisterRequest;
@@ -18,4 +20,6 @@ public interface IAuthService {
   CredentialResponse refresh(BadCredential badCredential, String referId, String refreshToken);
 
   CredentialResponse signUpGoogle(String code);
+
+  CredentialResponse signUpGoogleOAuth2(OAuth2User oauth2User);
 }
