@@ -36,7 +36,11 @@ import spring.boot.exception.ResourceServerEntryPoint;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class WebSecurityConfigurer {
   @NonFinal
-  String[] publicEndpoints = { "/api/v1/auth/sign-in", "/api/v1/auth/sign-up" };
+  String[] publicEndpoints = {
+      "/api/v1/auth/sign-in",
+      "/api/v1/auth/sign-up",
+      "/api/v1/auth/oauth/authorize",
+      "/api/v1/auth/oauth/callback/**" };
   String[] swaggerEndpoints = { "/v3/api-docs/**", "/swagger-ui/**" };
 
   @NonFinal

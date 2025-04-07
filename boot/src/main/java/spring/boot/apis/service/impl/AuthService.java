@@ -14,6 +14,9 @@ import lombok.experimental.FieldDefaults;
 import lombok.experimental.NonFinal;
 import spring.boot.apis.dto.auth.CredentialRequest;
 import spring.boot.apis.dto.auth.CredentialResponse;
+import spring.boot.apis.dto.auth.GoogleTokenExchangeRequest;
+import spring.boot.apis.dto.auth.GoogleTokenExchangeResponse;
+import spring.boot.apis.dto.auth.GoogleUser;
 import spring.boot.apis.dto.auth.RegisterRequest;
 import spring.boot.apis.dto.auth.RegisterResponse;
 import spring.boot.apis.dto.user.UserCreate;
@@ -22,9 +25,12 @@ import spring.boot.apis.mapper.AuthMapper;
 import spring.boot.apis.model.BadCredential;
 import spring.boot.apis.provider.ITokenBasedProvider;
 import spring.boot.apis.repository.BadCredentialRepository;
+import spring.boot.apis.repository.client.GoogleOAuthClient;
+import spring.boot.apis.repository.client.GoogleUserClient;
 import spring.boot.apis.service.IAuthService;
 import spring.boot.apis.service.IUserService;
 import spring.boot.constant.HttpMessage;
+import spring.boot.constant.OAuthGrantType;
 import spring.boot.exception.ServiceException;
 
 @Service
@@ -47,12 +53,27 @@ public class AuthService implements IAuthService {
   @Value("${spring.security.refreshTokenTtl}")
   long refreshTokenTtl;
 
+  @NonFinal
+  @Value("${spring.security.gapi.clientId}")
+  String gapiClientId;
+
+  @NonFinal
+  @Value("${spring.security.gapi.clientSecret}")
+  String gapiClientSecret;
+
+  @NonFinal
+  @Value("${spring.security.gapi.redirectUrl}")
+  String gapiRedirectUrl;
+
   PasswordEncoder passwordEncoder;
 
   ITokenBasedProvider<SignedJWT, UserResponse> jwtProvider;
   IUserService userService;
   BadCredentialRepository badCredentialRepository;
   AuthMapper authMapper;
+
+  GoogleOAuthClient googleOAuthClient;
+  GoogleUserClient googleUserClient;
 
   public CredentialResponse newCredentials(UserResponse user) {
     String accessId = UUID.randomUUID().toString();
@@ -114,5 +135,13 @@ public class AuthService implements IAuthService {
     BadCredential saved = badCredentialRepository.save(badCredential);
     UserResponse user = userService.findById(saved.getUserId());
     return newCredentials(user);
+  }
+
+  @Override
+  public CredentialResponse signUpGoogle(String code) {
+    // @formatter:off
+    GoogleTokenExchangeResponse tokenExchange = googleOAuthClient.exchangeToken(new GoogleTokenExchangeRequest(code, gapiClientId, gapiClientSecret, gapiRedirectUrl, OAuthGrantType.AUTHORIZATION_CODE.getValue())); // @formatter:on
+    GoogleUser googleUser = googleUserClient.userInfo(tokenExchange.getAccessToken());
+    return signUp(authMapper.asRegisterRequest(googleUser));
   }
 }

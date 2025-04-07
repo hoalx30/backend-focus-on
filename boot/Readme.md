@@ -12,5 +12,6 @@
 - authorization support: with rbac pattern using spring security (with filter and resource server)
 - transform codebase with spotless
 - apis documentation with swagger ui 3
+- oauth2 authentication support: sign-up with google (with googleapis)
 
 ### 💦 Todo:

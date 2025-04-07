@@ -16,4 +16,6 @@ public interface IAuthService {
   long signOut(BadCredential model);
 
   CredentialResponse refresh(BadCredential badCredential, String referId, String refreshToken);
+
+  CredentialResponse signUpGoogle(String code);
 }

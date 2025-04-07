@@ -1,7 +1,11 @@
 package spring.boot.apis.controller;
 
+import java.io.IOException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.Date;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.jwt.Jwt;
@@ -10,6 +14,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -18,10 +23,12 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import lombok.experimental.NonFinal;
 import spring.boot.apis.dto.auth.CredentialRequest;
 import spring.boot.apis.dto.auth.CredentialResponse;
 import spring.boot.apis.dto.auth.RegisterRequest;
@@ -38,6 +45,18 @@ import spring.boot.response.Response;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class AuthController {
   IAuthService authService;
+
+  @NonFinal
+  @Value("${spring.security.gapi.clientId}")
+  String gapiClientId;
+
+  @NonFinal
+  @Value("${spring.security.gapi.clientSecret}")
+  String gapiClientSecret;
+
+  @NonFinal
+  @Value("${spring.security.gapi.redirectUrl}")
+  String gapiRedirectUrl;
 
   @Operation(summary = "Sign-up", description = "Sign-up endpoint for new user")
   @ApiResponse(responseCode = "200", description = "Ok: Success", content = {
@@ -149,5 +168,24 @@ public class AuthController {
         .payload(credential)
         .build();
     return ResponseEntity.ok().body(response);
+  }
+
+  @GetMapping("/oauth/authorize")
+  public void authorize(HttpServletResponse response) throws IOException {
+    // @formatter:off
+    String oauthUrl = "https://accounts.google.com/o/oauth2/v2/auth" + "?client_id=" + gapiClientId + "&redirect_uri=" + URLEncoder.encode(gapiRedirectUrl, StandardCharsets.UTF_8) + "&response_type=code" + "&scope=" + URLEncoder.encode("openid profile email", StandardCharsets.UTF_8) + "&access_type=offline" + "&prompt=consent"; // @formatter:on
+    response.sendRedirect(oauthUrl);
+  }
+
+  @GetMapping("/oauth/callback")
+  public ResponseEntity<Response<CredentialResponse>> signUpGoogle(@RequestParam("code") String code) {
+    HttpMessage created = HttpMessage.SIGN_UP_WITH_GOOGLE;
+    CredentialResponse credential = authService.signUpGoogle(code);
+    var response = Response.<CredentialResponse>builder()
+        .code(created.getCode())
+        .message(created.getMessage())
+        .payload(credential)
+        .build();
+    return ResponseEntity.status(created.getHttpStatus()).body(response);
   }
 }

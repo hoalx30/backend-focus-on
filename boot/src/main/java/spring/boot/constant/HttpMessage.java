@@ -37,6 +37,7 @@ public enum HttpMessage {
   RETRIEVE_PROFILE(0, "retrieve profile success, enjoy.", HttpStatus.OK),
   SIGN_OUT(0, "sign out success, enjoy.", HttpStatus.OK),
   REFRESH_TOKEN(0, "refresh token success, enjoy.", HttpStatus.OK),
+  SIGN_UP_WITH_GOOGLE(0, "sign up with google success, enjoy.", HttpStatus.OK),
 
   ALREADY_EXISTED(200, "{resource} already existed, {identity} must be unique.", HttpStatus.BAD_REQUEST),
   OWNING_SIDE_NOT_EXISTED(201, "{owning side} does not exist.", HttpStatus.BAD_REQUEST),

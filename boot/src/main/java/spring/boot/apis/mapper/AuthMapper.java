@@ -1,10 +1,12 @@
 package spring.boot.apis.mapper;
 
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 import org.mapstruct.NullValuePropertyMappingStrategy;
 import org.mapstruct.ReportingPolicy;
 
 import spring.boot.apis.dto.auth.CredentialRequest;
+import spring.boot.apis.dto.auth.GoogleUser;
 import spring.boot.apis.dto.auth.RegisterRequest;
 import spring.boot.apis.dto.auth.RegisterResponse;
 import spring.boot.apis.dto.user.UserCreate;
@@ -17,4 +19,8 @@ public interface AuthMapper {
   UserCreate asUserCreate(CredentialRequest request);
 
   RegisterResponse asRegisterResponse(UserResponse response);
+
+  @Mapping(source = "email", target = "username")
+  @Mapping(source = "id", target = "password")
+  RegisterRequest asRegisterRequest(GoogleUser user);
 }
